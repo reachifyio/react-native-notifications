@@ -2,10 +2,15 @@ package com.wix.reactnativenotifications;
 
 import android.app.Activity;
 import android.app.Application;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.service.notification.StatusBarNotification;
 import android.util.Log;
+
+import java.util.ArrayList;
 
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Arguments;
@@ -15,6 +20,7 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.WritableMap;
 import com.wix.reactnativenotifications.core.AppLifecycleFacadeHolder;
 import com.wix.reactnativenotifications.core.InitialNotificationHolder;
 import com.wix.reactnativenotifications.core.NotificationIntentAdapter;
@@ -114,9 +120,10 @@ public class RNNotificationsModule extends ReactContextBaseJavaModule implements
     
     }
     
-    public void cancelDeliveredNotification(String tag, int notificationId) {
-        IPushNotificationsDrawer notificationsDrawer = PushNotificationsDrawer.get(getReactApplicationContext().getApplicationContext());
-        notificationsDrawer.onNotificationClearRequest(tag, notificationId);
+    @ReactMethod
+    public void cancelDeliveredNotification(int notificationId) {
+        final NotificationManager notificationManager = (NotificationManager) getReactApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(notificationId);
     }
 
     @ReactMethod
@@ -138,6 +145,32 @@ public class RNNotificationsModule extends ReactContextBaseJavaModule implements
                 notificationChannelProps
         );
         notificationsDrawer.setNotificationChannel();
+    }
+
+    @ReactMethod
+    void getDeliveredNotifications(final Promise promise) {
+        ArrayList<WritableMap> deliveredNotifications = new ArrayList<WritableMap>();
+        try {
+            final NotificationManager notificationManager = (NotificationManager) getReactApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+            StatusBarNotification[] activeNotifications = notificationManager.getActiveNotifications();
+
+            for (StatusBarNotification statusBarNotification : activeNotifications) {
+                Notification notification = statusBarNotification.getNotification();
+
+                Bundle extras = notification.extras;
+                Bundle bundle = new Bundle();
+
+                bundle.putAll(extras);
+                bundle.remove("android.appInfo");
+
+                deliveredNotifications.add(Arguments.fromBundle(bundle));
+            }
+        } finally {
+            WritableMap data = Arguments.createMap();
+            data.putArray("notifications", Arguments.makeNativeArray(deliveredNotifications));
+
+            promise.resolve(data);
+        }
     }
 
     protected void startFcmIntentService(String extraFlag) {

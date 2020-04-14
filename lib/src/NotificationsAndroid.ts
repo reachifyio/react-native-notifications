@@ -28,4 +28,11 @@ export class NotificationsAndroid {
   public setNotificationChannel(notificationChannel: NotificationChannel) {
     return this.commands.setNotificationChannel(notificationChannel);
   }
+
+  /**
+   * cancelDeliveredNotification
+   */
+  public cancelDeliveredNotification(identifier: number) {
+    return this.commands.cancelDeliveredNotification(identifier);
+  }
 }

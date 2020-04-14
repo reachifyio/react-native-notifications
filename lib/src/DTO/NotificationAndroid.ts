@@ -17,4 +17,12 @@ export class NotificationAndroid extends Notification {
   get sound(): string {
     return this.payload.sound;
   }
+
+  get data(): any {
+    return this.payload;
+  }
+
+  get isSilent(): boolean {
+    return !(this.payload["google.notification.title"] || this.payload["google.notification.body"]);
+  }
 }

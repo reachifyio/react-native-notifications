@@ -80,6 +80,10 @@ export class Commands {
     return this.nativeCommandsSender.removeDeliveredNotifications(identifiers);
   }
 
+  public cancelDeliveredNotification(identifier: number) {
+    return this.nativeCommandsSender.cancelDeliveredNotification(identifier);
+  }
+
   public getDeliveredNotifications(): Promise<Notification[]> {
     return this.nativeCommandsSender.getDeliveredNotifications();
   }

@@ -1,6 +1,6 @@
 {
-  "name": "react-native-notifications",
-  "version": "3.1.4",
+  "name": "@reachify/react-native-notifications",
+  "version": "3.1.4-0",
   "description": "Advanced Push Notifications (Silent, interactive notifications) for iOS & Android",
   "author": "Lidan Hifi <lidan.hifi@gmail.com>",
   "license": "MIT",
@@ -72,7 +72,7 @@
     "github-release-notes": "0.17.0"
   },
   "publishConfig": {
-    "registry": "https://registry.npmjs.org/"
+    "registry": "http://npm.dev.reachify.io/"
   },
   "repository": {
     "type": "git",

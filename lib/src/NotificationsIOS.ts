@@ -1,4 +1,3 @@
-import { Notification } from './DTO/Notification';
 import { Commands } from './commands/Commands';
 import { Platform } from 'react-native';
 import { EventsRegistryIOS } from './events/EventsRegistryIOS';
@@ -72,13 +71,6 @@ export class NotificationsIOS {
    */
   public removeDeliveredNotifications(identifiers: Array<string>) {
     return this.commands.removeDeliveredNotifications(identifiers);
-  }
-
-  /**
-   * getDeliveredNotifications
-   */
-  public getDeliveredNotifications(): Promise<Notification[]> {
-    return this.commands.getDeliveredNotifications();
   }
 
   /**
