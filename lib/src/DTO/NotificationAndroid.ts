@@ -23,6 +23,6 @@ export class NotificationAndroid extends Notification {
   }
 
   get isSilent(): boolean {
-    return !(this.payload["google.notification.title"] || this.payload["google.notification.body"]);
+    return !(this.payload.title || this.payload.body);
   }
 }
