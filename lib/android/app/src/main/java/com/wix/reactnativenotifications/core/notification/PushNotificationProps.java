@@ -18,12 +18,25 @@ public class PushNotificationProps {
         return getBundleStringFirstNotNull("gcm.notification.body", "body");
     }
 
+    public Integer getId() {
+        return mBundle.getInt("identifier");
+        // String id = mBundle.getString("id");
+
+        // if (id == null) return null;
+
+        // return Integer.parseInt(id);
+    }
+
     public Bundle asBundle() {
         return (Bundle) mBundle.clone();
     }
 
     public boolean isFirebaseBackgroundPayload() {
         return mBundle.containsKey("google.message_id") && !mBundle.containsKey("title");
+    }
+
+    public boolean isSilent() {
+        return (getTitle() == null) && (getBody() == null);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.wix.reactnativenotifications.fcm;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -20,7 +21,16 @@ public class FcmInstanceIdListenerService extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(RemoteMessage message){
+        Intent intent = message.toIntent();
+
+        // Set id if it doesn't exist
+        if (intent.getExtras().get("identifier") == null) {
+            intent.putExtra("identifier", (int) System.nanoTime());
+        }
+
         Bundle bundle = message.toIntent().getExtras();
+
+
         if(BuildConfig.DEBUG) Log.d(LOGTAG, "New message from FCM: " + bundle);
 
         try {

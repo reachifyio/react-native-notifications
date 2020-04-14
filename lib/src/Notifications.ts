@@ -94,6 +94,13 @@ export class NotificationsRoot {
   }
 
   /**
+   * getDeliveredNotifications
+   */
+  public getDeliveredNotifications(): Promise<Notification[]> {
+    return this.commands.getDeliveredNotifications();
+  }
+
+  /**
    * setNotificationChannel
    */
   public setNotificationChannel(notificationChannel: NotificationChannel) {

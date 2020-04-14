@@ -19,6 +19,7 @@ interface NativeCommandsModule {
   isRegisteredForRemoteNotifications(): Promise<boolean>;
   checkPermissions(): Promise<NotificationPermissions>;
   removeDeliveredNotifications(identifiers: Array<string>): void;
+  cancelDeliveredNotification(identifier: string): void;
   removeAllDeliveredNotifications(): void;
   getDeliveredNotifications(): Promise<Notification[]>;
   setCategories(categories: [NotificationCategory?]): void;
@@ -93,7 +94,11 @@ export class NativeCommandsSender {
     return this.nativeCommandsModule.removeDeliveredNotifications(identifiers);
   }
 
-  public getDeliveredNotifications(): Promise<Notification[]> {
+  cancelDeliveredNotification(identifier: string) {
+    return this.nativeCommandsModule.cancelDeliveredNotification(identifier);
+  }
+
+  getDeliveredNotifications(): Promise<Notification[]> {
     return this.nativeCommandsModule.getDeliveredNotifications();
   }
 

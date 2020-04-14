@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.facebook.react.bridge.ReactContext;
 import com.wix.reactnativenotifications.core.AppLaunchHelper;
@@ -19,6 +20,7 @@ import com.wix.reactnativenotifications.core.JsIOHelper;
 import com.wix.reactnativenotifications.core.NotificationIntentAdapter;
 import com.wix.reactnativenotifications.core.ProxyService;
 
+import static com.wix.reactnativenotifications.Defs.LOGTAG;
 import static com.wix.reactnativenotifications.Defs.NOTIFICATION_OPENED_EVENT_NAME;
 import static com.wix.reactnativenotifications.Defs.NOTIFICATION_RECEIVED_EVENT_NAME;
 
@@ -59,7 +61,7 @@ public class PushNotification implements IPushNotification {
 
     @Override
     public void onReceived() throws InvalidNotificationException {
-        if (!mAppLifecycleFacade.isAppVisible()) {
+        if (!mAppLifecycleFacade.isAppVisible() && !mNotificationProps.isSilent()) {
             postNotification(null);
         }
         notifyReceivedToJS();
@@ -148,8 +150,10 @@ public class PushNotification implements IPushNotification {
                 .setContentTitle(mNotificationProps.getTitle())
                 .setContentText(mNotificationProps.getBody())
                 .setContentIntent(intent)
+                .setExtras(mNotificationProps.asBundle())
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setAutoCancel(true);
+        Log.d(LOGTAG, "NOTIFICATION BUILDER - ADDING EXTRAS" + mNotificationProps.asBundle());
 
         setUpIcon(notification);
 
@@ -185,7 +189,8 @@ public class PushNotification implements IPushNotification {
     }
 
     protected int postNotification(Notification notification, Integer notificationId) {
-        int id = notificationId != null ? notificationId : createNotificationId(notification);
+        int id = notificationId != null ? notificationId : mNotificationProps.getId();
+        Log.d(LOGTAG, "POST NOTIFICATION ID" + mNotificationProps.getId());
         postNotification(id, notification);
         return id;
     }
@@ -198,10 +203,6 @@ public class PushNotification implements IPushNotification {
     protected void clearAllNotifications() {
         final NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancelAll();
-    }
-
-    protected int createNotificationId(Notification notification) {
-        return (int) System.nanoTime();
     }
 
     private void notifyReceivedToJS() {

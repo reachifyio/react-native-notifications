@@ -11,7 +11,7 @@ export class CompletionCallbackWrapper {
 
   public wrapReceivedBackgroundCallback(callback: Function): (notification: Notification) => void {
     return (notification) => {
-      if (!this.applicationIsVisible()) {
+      if (!this.applicationIsVisible() && !notification.isSilent) {
         this.wrapReceivedAndInvoke(callback, notification);
       }
     }
@@ -19,7 +19,15 @@ export class CompletionCallbackWrapper {
 
   public wrapReceivedForegroundCallback(callback: Function): (notification: Notification) => void {
     return (notification) => {
-      if (this.applicationIsVisible()) {
+      if (this.applicationIsVisible() && !notification.isSilent) {
+        this.wrapReceivedAndInvoke(callback, notification);
+      }
+    }
+  }
+
+  public wrapReceivedSilentCallback(callback: Function): (notification: Notification) => void {
+    return (notification) => {
+      if (notification.isSilent) {
         this.wrapReceivedAndInvoke(callback, notification);
       }
     }
