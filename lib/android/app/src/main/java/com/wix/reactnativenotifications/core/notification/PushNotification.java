@@ -152,7 +152,8 @@ public class PushNotification implements IPushNotification {
                 .setContentIntent(intent)
                 .setExtras(mNotificationProps.asBundle())
                 .setDefaults(Notification.DEFAULT_ALL)
-                .setAutoCancel(true);
+                .setAutoCancel(true)
+                .setStyle(new Notification.BigTextStyle().bigText(mNotificationProps.getBody()));
 
         setUpIcon(notification);
 
@@ -181,8 +182,11 @@ public class PushNotification implements IPushNotification {
 
     private void setUpIconColor(Notification.Builder notification) {
         int colorResID = getAppResourceId("colorAccent", "color");
+        Log.e(LOGTAG, "COLOR RES ID: " + colorResID);
         if (colorResID != 0 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Log.e(LOGTAG, "SETTING COLOR");
             int color = mContext.getResources().getColor(colorResID);
+            Log.e(LOGTAG, "COLOR" + color);
             notification.setColor(color);
         }
     }
