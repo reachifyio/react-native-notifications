@@ -18,6 +18,10 @@ public class PushNotificationProps {
         return getBundleStringFirstNotNull("gcm.notification.body", "body");
     }
 
+    public String getCallId() {
+        return getBundleStringFirstNotNull("gcm.notification.call-id", "call-id");
+    }
+
     public Integer getId() {
         return mBundle.getInt("id");
     }
@@ -32,6 +36,10 @@ public class PushNotificationProps {
 
     public boolean isSilent() {
         return (getTitle() == null) && (getBody() == null);
+    }
+
+    public boolean isVoip() {
+        return (getCallId() != null);
     }
 
     @Override

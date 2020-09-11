@@ -34,4 +34,8 @@ export class Notification {
   get isSilent(): boolean {
     return false;
   }
+
+  get isVoip(): boolean {
+    return false;
+  }
 }

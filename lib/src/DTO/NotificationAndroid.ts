@@ -25,4 +25,8 @@ export class NotificationAndroid extends Notification {
   get isSilent(): boolean {
     return !(this.payload.title || this.payload.body);
   }
+
+  get isVoip(): boolean {
+    return !!this.payload["call-id"];
+  }
 }

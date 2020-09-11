@@ -61,7 +61,7 @@ public class PushNotification implements IPushNotification {
 
     @Override
     public void onReceived() throws InvalidNotificationException {
-        if (!mAppLifecycleFacade.isAppVisible() && !mNotificationProps.isSilent()) {
+        if (!mAppLifecycleFacade.isAppVisible() && !mNotificationProps.isSilent() && !mNotificationProps.isVoip()) {
             postNotification(null);
         }
         notifyReceivedToJS();
@@ -182,11 +182,8 @@ public class PushNotification implements IPushNotification {
 
     private void setUpIconColor(Notification.Builder notification) {
         int colorResID = getAppResourceId("colorAccent", "color");
-        Log.e(LOGTAG, "COLOR RES ID: " + colorResID);
         if (colorResID != 0 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Log.e(LOGTAG, "SETTING COLOR");
             int color = mContext.getResources().getColor(colorResID);
-            Log.e(LOGTAG, "COLOR" + color);
             notification.setColor(color);
         }
     }

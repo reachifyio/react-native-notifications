@@ -30,6 +30,10 @@ export class EventsRegistry {
   public registerNotificationReceivedSilent(callback: (notification: Notification) => void): EmitterSubscription {
     return this.nativeEventsReceiver.registerNotificationReceived(this.completionCallbackWrapper.wrapReceivedSilentCallback(callback));
   }
+
+  public registerNotificationReceivedVoip(callback: (notification: Notification) => void): EmitterSubscription {
+    return this.nativeEventsReceiver.registerNotificationReceived(this.completionCallbackWrapper.wrapReceivedVoipCallback(callback));
+  }
   
   public registerNotificationOpened(callback: (response: NotificationResponse, completion: () => void) => void): EmitterSubscription {
     return this.nativeEventsReceiver.registerNotificationOpened(this.completionCallbackWrapper.wrapOpenedCallback(callback));

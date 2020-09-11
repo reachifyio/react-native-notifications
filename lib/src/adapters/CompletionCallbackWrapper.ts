@@ -33,6 +33,14 @@ export class CompletionCallbackWrapper {
     }
   }
 
+  public wrapReceivedVoipCallback(callback: Function): (notification: Notification) => void {
+    return (notification) => {
+      if (notification.isVoip) {
+        this.wrapReceivedAndInvoke(callback, notification);
+      }
+    }
+  }
+
   private wrapReceivedAndInvoke(callback: Function, notification: Notification) {
     const completion = (response: NotificationCompletion) => {
       if (Platform.OS === 'ios') {
