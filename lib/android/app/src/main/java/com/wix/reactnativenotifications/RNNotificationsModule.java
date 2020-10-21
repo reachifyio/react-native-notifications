@@ -37,6 +37,7 @@ import com.wix.reactnativenotifications.fcm.FcmInstanceIdRefreshHandlerService;
 import static com.wix.reactnativenotifications.Defs.LOGTAG;
 
 public class RNNotificationsModule extends ReactContextBaseJavaModule implements ActivityEventListener {
+    public static boolean active = false;
 
     public RNNotificationsModule(Application application, ReactApplicationContext reactContext) {
         super(reactContext);
@@ -55,10 +56,12 @@ public class RNNotificationsModule extends ReactContextBaseJavaModule implements
     @Override
     public void initialize() {
         if(BuildConfig.DEBUG) Log.d(LOGTAG, "Native module init");
+        Log.d(LOGTAG, "Native module init");
         startFcmIntentService(FcmInstanceIdRefreshHandlerService.EXTRA_IS_APP_INIT);
 
         final IPushNotificationsDrawer notificationsDrawer = PushNotificationsDrawer.get(getReactApplicationContext().getApplicationContext());
         notificationsDrawer.onAppInit();
+        active = true;
     }
 
     @Override

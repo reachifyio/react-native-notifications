@@ -17,6 +17,7 @@ import com.wix.reactnativenotifications.BuildConfig;
 import com.wix.reactnativenotifications.core.notification.IPushNotification;
 import com.wix.reactnativenotifications.core.notification.PushNotification;
 import com.wix.reactnativenotifications.fcm.RNNotificationsHeadlessService;
+import com.wix.reactnativenotifications.RNNotificationsModule;
 
 import java.util.*;
 
@@ -38,24 +39,35 @@ public class FcmInstanceIdListenerService extends FirebaseMessagingService {
             bundle.putInt("id", (int) SystemClock.uptimeMillis());
         }
 
-        if(BuildConfig.DEBUG) Log.d(LOGTAG, "New message from FCM: " + bundle);
+        Log.d(LOGTAG, "New message from FCM: " + bundle);
 
         try {
             Context context = getApplicationContext();
-            Log.d(LOGTAG, "Is app in foreground: " + isAppInForeground(context));
+            Boolean isVoip = bundle.get("Call-ID") != null;
+            Boolean isSilent = !isVoip && (bundle.get("title") == null) && (bundle.get("body") == null);
 
-            if (isAppInForeground(context) || (bundle.get("Call-ID") == null)) {
+            // Handle notification normally if app is running at all
+            if (RNNotificationsModule.active || !(isVoip || isSilent)) {
                 final IPushNotification notification = PushNotification.get(getApplicationContext(), bundle);
                 notification.onReceived();
                 return;
             }
 
+            // App is not running - start a headless task
             Intent intent = new Intent(context, RNNotificationsHeadlessService.class);
             intent.putExtra("message", message);
-            ComponentName name = getApplicationContext().startService(intent);
 
-            if (name != null) {
-                HeadlessJsTaskService.acquireWakeLockNow(getApplicationContext());
+            if (isVoip) {
+              ComponentName name = getApplicationContext().startService(intent);
+
+              if (name != null) {
+                  HeadlessJsTaskService.acquireWakeLockNow(getApplicationContext());
+              }
+              return;
+            }
+            
+            if (isSilent) {
+              ComponentName name = getApplicationContext().startForegroundService(intent);
             }
         } catch (IPushNotification.InvalidNotificationException e) {
             // An FCM message, yes - but not the kind we know how to work with.
