@@ -1,9 +1,20 @@
 import { Commands } from './commands/Commands';
-import { Platform } from 'react-native';
+import { Platform, AppRegistry } from 'react-native';
 import { NotificationChannel } from './interfaces/NotificationChannel';
+import { backgroundMessageHandler } from './events/EventsRegistry';
 
 export class NotificationsAndroid {
   constructor(private readonly commands: Commands) {
+    AppRegistry.registerHeadlessTask('RNNotificationsHeadlessTask', () => {
+      if (!backgroundMessageHandler) {
+        console.warn(
+          'No background message handler has been set. Set a handler via the "setBackgroundMessageHandler" method.',
+        );
+        return () => Promise.resolve();
+      }
+      return remoteMessage => backgroundMessageHandler(remoteMessage);
+    });
+
     return new Proxy(this, {
       get(target, name) {
         if (Platform.OS === 'android') {

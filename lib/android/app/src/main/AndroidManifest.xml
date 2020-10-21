@@ -9,6 +9,7 @@
          A proxy-service that gives the library an opportunity to do some work before launching/resuming the actual application task.
          -->
         <service android:name=".core.ProxyService"/>
+        <service android:name=".fcm.RNNotificationsHeadlessService" />
 
         <service
             android:name=".fcm.FcmInstanceIdListenerService">

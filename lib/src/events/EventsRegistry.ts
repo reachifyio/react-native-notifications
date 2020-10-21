@@ -9,6 +9,8 @@ import { CompletionCallbackWrapper } from '../adapters/CompletionCallbackWrapper
 import { Notification } from '../DTO/Notification';
 import { NotificationCompletion } from '../interfaces/NotificationCompletion';
 
+let backgroundMessageHandler: Function;
+
 export class EventsRegistry {
   constructor(
     private nativeEventsReceiver: NativeEventsReceiver,
@@ -31,7 +33,13 @@ export class EventsRegistry {
     return this.nativeEventsReceiver.registerNotificationReceived(this.completionCallbackWrapper.wrapReceivedSilentCallback(callback));
   }
 
-  public registerNotificationReceivedVoip(callback: (notification: Notification) => void): EmitterSubscription {
+  public registerNotificationReceivedVoip(
+    callback: (notification: Notification) => void,
+    callbackFromQuit: (notification: Notification) => void,
+  ): EmitterSubscription {
+    if (callbackFromQuit) {
+      backgroundMessageHandler = callbackFromQuit;
+    }
     return this.nativeEventsReceiver.registerNotificationReceived(this.completionCallbackWrapper.wrapReceivedVoipCallback(callback));
   }
   
@@ -43,3 +51,5 @@ export class EventsRegistry {
     return this.nativeEventsReceiver.registerRemoteNotificationsRegistrationFailed(callback);
   }
 }
+
+export { backgroundMessageHandler };
